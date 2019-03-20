@@ -1,3 +1,5 @@
+#Code from @gskielian on github
+#https://github.com/gskielian/JPG-PNG-to-MNIST-NN-Format/blob/master/README.md
 import os
 from PIL import Image
 from array import *
@@ -16,6 +18,7 @@ for name in Names:
 		path = os.path.join(name[0],dirname)
 		for filename in os.listdir(path):
 			if filename.endswith(".png"):
+                
 				FileList.append(os.path.join(name[0],dirname,filename))
 
 	shuffle(FileList) # Usefull for further segmenting the validation set
@@ -32,14 +35,13 @@ for name in Names:
 
 		for x in range(0,width):
 			for y in range(0,height):
-				data_image.append(pixel[y,x])
+				data_image.append(abs(pixel[y,x] - 255))
 
 		data_label.append(label) # labels start (one unsigned byte each)
 
 	hexval = "{0:#0{1}x}".format(len(FileList),6) # number of files in HEX
 
 	# header for label array
-
 	header = array('B')
 	header.extend([0,0,8,1,0,0])
 	header.append(int('0x'+hexval[2:][:2],16))
@@ -48,7 +50,6 @@ for name in Names:
 	data_label = header + data_label
 
 	# additional header for images array
-	
 	if max([width,height]) <= 256:
 		header.extend([0,0,0,width,0,0,0,height])
 	else:
